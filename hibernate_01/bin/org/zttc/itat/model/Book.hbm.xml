@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zttc.itat.model">
+    <class name="Book" table="t_book">
+        <id name="id">
+        <!-- 表示不会自动生成，而是需要由用户来指定 -->
+          <!--   <generator class="assigned"/> -->
+        <!-- 会自动生成一个字符串，此时组件必须为String类型 -->
+          	<generator class="uuid"/>
+        </id>
+        <property name="name"/>
+        <property name="price"/>
+        <property name="bookPage" column="book_page" type="int"/>
+    </class>
+</hibernate-mapping>

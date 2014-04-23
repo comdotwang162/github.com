@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zttc.itat.model">
+    <class name="TeacherCourse" table="t_teacher_course">
+        <id name="id">
+          	<generator class="native"/>
+        </id>
+        <property name="ach"/>
+        <many-to-one name="teacher" column="tid"/>
+        <many-to-one name="course" column="cid"/>
+    </class>
+</hibernate-mapping>

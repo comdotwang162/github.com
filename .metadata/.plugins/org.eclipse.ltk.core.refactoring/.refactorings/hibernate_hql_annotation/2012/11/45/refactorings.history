@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;org.zttc.itat.test.CopyOfTestCache&apos; to &apos;TestCache&apos;&#x0D;&#x0A;- Original project: &apos;hibernate_hql_annotation&apos;&#x0D;&#x0A;- Original element: &apos;org.zttc.itat.test.CopyOfTestCache&apos;&#x0D;&#x0A;- Renamed element: &apos;org.zttc.itat.test.TestCache&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;CopyOfTestCache&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;org.zttc.itat.test{CopyOfTestCache.java[CopyOfTestCache" matchStrategy="1" name="TestCache" qualified="false" references="true" similarDeclarations="false" stamp="1352290938328" textual="false" version="1.0"/>
+</session>

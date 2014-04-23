@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zttc.itat.model">
+    <class name="IDCard" table="t_id_card">
+        <id name="id">
+        <!-- 表示不会自动生成，而是需要由用户来指定 -->
+          <!--   <generator class="assigned"/> -->
+        <!-- 会自动生成一个字符串，此时组件必须为String类型 -->
+          	<generator class="native"/>
+        </id>
+        <property name="no"/>
+        <!-- one2one和oneToMany类似，只用增加unique=true说明只能有一个对应关系 -->
+        <many-to-one name="person" column="pid" unique="true"/>
+    </class>
+</hibernate-mapping>

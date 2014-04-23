@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zttc.itat.model">
+    <class name="Person" table="t_person">
+        <id name="id">
+        <!-- 表示不会自动生成，而是需要由用户来指定 -->
+          <!--   <generator class="assigned"/> -->
+        <!-- 会自动生成一个字符串，此时组件必须为String类型 -->
+          	<generator class="native"/>
+        </id>
+        <property name="name"/>
+        <!-- name表示属性的名称，property-ref表示由对端来维护关系-->
+        <one-to-one name="idCard" property-ref="person"/>
+    </class>
+</hibernate-mapping>

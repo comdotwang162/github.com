@@ -1,0 +1,34 @@
+package org.zttc.itat.model;
+
+public class StuDto {
+	private Student stu;
+	private Classroom cla;
+	private Special spe;
+	public Student getStu() {
+		return stu;
+	}
+	public void setStu(Student stu) {
+		this.stu = stu;
+	}
+	public Classroom getCla() {
+		return cla;
+	}
+	public void setCla(Classroom cla) {
+		this.cla = cla;
+	}
+	public Special getSpe() {
+		return spe;
+	}
+	public void setSpe(Special spe) {
+		this.spe = spe;
+	}
+	public StuDto(Student stu, Classroom cla, Special spe) {
+		super();
+		this.stu = stu;
+		this.cla = cla;
+		this.spe = spe;
+	}
+	
+	public StuDto() {
+	}
+}

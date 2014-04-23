@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zttc.itat.model">
+    <class name="Classroom" table="t_cla">
+        <id name="id">
+        <!-- 表示不会自动生成，而是需要由用户来指定 -->
+          <!--   <generator class="assigned"/> -->
+        <!-- 会自动生成一个字符串，此时组件必须为String类型 -->
+          	<generator class="native"/>
+        </id>
+        <property name="name"/>
+        <property name="grade"/>
+        <!-- inverse=true表示不再自己这一端维护关系 -->
+        <set name="stus" lazy="extra" inverse="true">
+        	<key column="cid"/>
+        	<one-to-many class="Student"/>
+        </set>
+    </class>
+</hibernate-mapping>

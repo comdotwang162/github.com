@@ -1,0 +1,46 @@
+package org.zttc.itat.test;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.junit.Test;
+import org.zttc.itat.model.Special;
+import org.zttc.itat.model.Student;
+import org.zttc.itat.util.HibernateUtil;
+
+public class TestFetch {
+	@Test
+	public void test01() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 对于Annotation的配置而言，默认就是基于join的抓取的，所以只会发出一条SQL
+			 */
+			Student stu = (Student)session.load(Student.class, 1);
+			System.out.println(stu.getName()+","+stu.getClassroom().getName()+","+stu.getClassroom().getSpecial().getName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test02() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 对于Annotation的配置而言，默认就是基于join的抓取的，所以只会发出一条SQL
+			 */
+			Student stu = (Student)session.load(Student.class, 1);
+			System.out.println(stu.getName()+","+stu.getClassroom().getName()+","+stu.getClassroom().getSpecial().getName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+}

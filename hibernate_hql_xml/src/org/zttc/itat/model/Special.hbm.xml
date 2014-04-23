@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zttc.itat.model">
+    <class name="Special" table="t_special">
+        <id name="id">
+          	<generator class="native"/>
+        </id>
+        <property name="name"/>
+        <property name="type"/>
+        <set name="clas" inverse="true" lazy="extra">
+        	<key column="spe_id"/>
+        	<one-to-many class="Classroom"/>
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,23 @@
+package org.zttc.itat.test;
+
+
+
+import org.hibernate.Session;
+import org.junit.Test;
+import org.zttc.itat.model.Student;
+import org.zttc.itat.util.HibernateUtil;
+
+public class TestLock {
+	@Test
+	public void testUpdate01() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+}

@@ -1,0 +1,263 @@
+package org.zttc.itat.test;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.junit.Test;
+import org.zttc.itat.model.Special;
+import org.zttc.itat.model.Student;
+import org.zttc.itat.util.HibernateUtil;
+
+@SuppressWarnings("unchecked")
+public class TestHQL {
+	
+	@Test
+	public void test01() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 对于HQL而言，都是基于对象进行查询的
+			 */
+			Query query = session.createQuery("from Special");
+			List<Special> spes = query.list();
+			for(Special spe:spes) {
+				System.out.println(spe.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test02() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 对于HQL而言，都是基于对象进行查询的
+			 */
+//			Query query = session.createQuery("select * from Special");//不能使用select *进行查询
+			/**
+			 * 可以使用链式查询的方式
+			 */
+			List<Special> spes = session.createQuery("select spe from Special spe")
+										.list();
+			for(Special spe:spes) {
+				System.out.println(spe.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test03() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			List<Student> stus = session.createQuery("from Student where name like '%张%'")
+										.list();
+			for(Student stu:stus) {
+				System.out.println(stu.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test04() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 基于?的条件的查询，特别注意：jdbc设置参数的最小下标是1，hibernate是0
+			 */
+			List<Student> stus = session.createQuery("from Student where name like ?")
+										.setParameter(0, "%李%")
+										.list();
+			for(Student stu:stus) {
+				System.out.println(stu.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test05() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 还可以基于别名进行查询，使用:xxx来说明别名的名称
+			 */
+			List<Student> stus = session.createQuery("from Student where name like :name and sex=:sex")
+										.setParameter("name", "%刘%")
+										.setParameter("sex", "男")
+										.list();
+			for(Student stu:stus) {
+				System.out.println(stu.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test06() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 使用uniqueResult可以返回唯一的一个值
+			 */
+			Long stus = (Long)session.createQuery("select count(*) from Student where name like :name and sex=:sex")
+										.setParameter("name", "%刘%")
+										.setParameter("sex", "男")
+										.uniqueResult();
+			System.out.println(stus);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test07() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 使用uniqueResult可以返回唯一的一个值
+			 */
+			Student stu = (Student)session.createQuery("select stu from Student stu where id=:id")
+										.setParameter("id", 1)
+										.uniqueResult();
+			System.out.println(stu.getName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test08() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 基于投影的查询，通过在列表中存储一个对象的数组
+			 */
+			List<Object[]> stus = session.createQuery("select stu.sex,count(*) from Student stu group by stu.sex")
+										.list();
+			for(Object[] obj:stus) {
+				System.out.println(obj[0]+":"+obj[1]);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test09() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 如果对象中相应的导航对象，可以直接导航完成查询
+			 */
+			List<Student> stus = session.createQuery("select stu from Student stu where stu.classroom.name=? and stu.name like ?")
+								.setParameter(0, "计算机教育班").setParameter(1, "%张%")
+								.list();
+			for(Student stu:stus) {
+				System.out.println(stu.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test10() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 可以使用in来设置基于列表的查询，此处的查询需要使用别名进行查询
+			 * 特别注意，使用in的查询必须在其他的查询之后
+			 */
+			List<Student> stus = session.createQuery("select stu from Student stu where stu.name like ? and stu.classroom.id in (:clas)")
+								.setParameter(0, "%张%").setParameterList("clas", new Integer[]{1,2})
+								.list();
+			for(Student stu:stus) {
+				System.out.println(stu.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test11() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 使用setFirstResult和setMaxResult可以完成分页的offset和pageSize的设置
+			 */
+			List<Student> stus = session.createQuery("select stu from Student stu where stu.classroom.id in (:clas)")
+								.setParameterList("clas", new Integer[]{1,2})
+								.setFirstResult(0).setMaxResults(15)
+								.list();
+			for(Student stu:stus) {
+				System.out.println(stu.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test12() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 可以通过is null来查询为空的对象
+			 */
+			List<Student> stus = session.createQuery("select stu from Student stu where stu.classroom is null")
+								.setFirstResult(0).setMaxResults(15)
+								.list();
+			for(Student stu:stus) {
+				System.out.println(stu.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+}

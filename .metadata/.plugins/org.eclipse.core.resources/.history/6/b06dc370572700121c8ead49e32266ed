@@ -1,0 +1,17 @@
+使用二级缓存的步骤
+1、hibernate并没有提供相应的二级缓存的组件，所以需要加入额外的二级缓存包，常用的二级缓存包是ECHcache
+2、在hibernate.cfg.xml中配置开启二级缓存
+<!-- 设置二级缓存为true -->
+		<property name="hibernate.cache.use_second_level_cache">true</property>
+		<!-- 设置二级缓存所提供的类 -->
+		<property name="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider</property>
+		<!-- 在hibernate4.0之后需要设置facotory_class -->
+		<property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
+3、设置相应的ehcache.xml文件，在这个文件中配置二级缓存的参数，并且将文件在cfg文件中配置
+<!-- 说明ehcache的配置文件路径 -->
+		<property name="hibernate.cache.provider_configuration_file_resource_path">ehcache.xml</property>
+4、开启二级缓存
+	在xml的配置中设置
+	 <class name="Student" table="t_stu">
+    	<cache usage="read-only"/>
+5、二级缓存缓存的是对象，它是把所有的对象缓存到内存中，一定注意是基于对象的缓存

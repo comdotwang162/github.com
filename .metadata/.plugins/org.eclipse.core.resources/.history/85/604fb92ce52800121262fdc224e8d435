@@ -1,0 +1,32 @@
+package org.zttc.itat.model2;
+
+
+public class Classroom {
+	private int id;
+	private String name;
+	private int grade;
+	/**
+	 * 班级编号，班级的编号可以由程序自动生成，可以考虑使用当前时间的毫秒级+某个随机数
+	 */
+	private String bh;
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getGrade() {
+		return grade;
+	}
+	public void setGrade(int grade) {
+		this.grade = grade;
+	}
+	
+}

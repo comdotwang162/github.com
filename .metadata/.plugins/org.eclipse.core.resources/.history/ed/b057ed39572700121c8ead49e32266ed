@@ -1,0 +1,194 @@
+package org.zttc.itat.test;
+
+
+import java.util.Iterator;
+import java.util.List;
+
+import org.hibernate.Session;
+import org.junit.Test;
+import org.zttc.itat.model.Student;
+import org.zttc.itat.util.HibernateUtil;
+
+@SuppressWarnings("unchecked")
+public class TestSecondCache {
+	@Test
+	public void test01() {
+		Session session = null;
+		try {
+			/**
+			 * 此时会发出一条sql取出所有的学生信息
+			 */
+			session = HibernateUtil.openSession();
+			Student stu = (Student)session.load(Student.class, 1);
+			System.out.println(stu.getName()+",---");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+		try {
+			session = HibernateUtil.openSession();
+			session.beginTransaction();
+			/**
+			 *此时session已经关闭了，但是Student在二级缓存中，所以也不会发出SQL语句
+			 */
+			Student stu = (Student)session.load(Student.class, 1);
+			//会报错，因为二级缓存设置为read-only
+//			stu.setName("abc");
+			System.out.println(stu.getName()+",---");
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	
+	@Test
+	public void test03() {
+		Session session = null;
+		try {
+			/**
+			 * 此时会发出一条sql取出所有的学生信息
+			 */
+			session = HibernateUtil.openSession();
+			List<Student> ls = session.createQuery("from Student")
+					.setFirstResult(0).setMaxResults(50).list();
+			Iterator<Student> stus = ls.iterator();
+			for(;stus.hasNext();) {
+				Student stu = stus.next();
+				System.out.println(stu.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+		
+		try {
+			session = HibernateUtil.openSession();
+			session.beginTransaction();
+			/**
+			 *此时session已经关闭了，但是Student在二级缓存中，所以也不会发出SQL语句
+			 */
+			Student stu = (Student)session.load(Student.class, 1);
+			//会报错，因为二级缓存设置为read-only
+//			stu.setName("abc");
+			System.out.println(stu.getName()+",---");
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test04() {
+		Session session = null;
+		try {
+			/**
+			 * 此时会发出一条sql取出所有的学生信息
+			 */
+			session = HibernateUtil.openSession();
+			List<Object[]> ls = session.createQuery("select stu.id,stu.name from Student stu")
+					.setFirstResult(0).setMaxResults(50).list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+		
+		try {
+			session = HibernateUtil.openSession();
+			session.beginTransaction();
+			/**
+			 *以上代码仅仅取了id和name，而二级缓存是缓存对象的，所以上一段代码不会将对象加入二级缓存
+			 *此时就是发出相应的sql
+			 */
+			Student stu = (Student)session.load(Student.class, 1);
+			//会报错，因为二级缓存设置为read-only
+//			stu.setName("abc");
+			System.out.println(stu.getName()+",---");
+			session.getTransaction().commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test05() {
+		Session session = null;
+		try {
+			/**
+			 * 此时会发出一条sql取出所有的学生信息
+			 */
+			session = HibernateUtil.openSession();
+			List<Object[]> ls = session.createQuery("select stu from Student stu")
+					.setFirstResult(0).setMaxResults(50).list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+		
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 由于学生的对象已经缓存在二级缓存中了，此时再使用iterate来获取对象的时候，首先会通过一条
+			 * 取id的语句，然后在获取对象时去二级缓存中，如果发现就不会再发SQL，这样也就解决了N+1问题
+			 * 而且内存占用也不多
+			 */
+			Iterator<Student> stus = session.createQuery("from Student")
+					.setFirstResult(0).setMaxResults(50).iterate();
+			for(;stus.hasNext();) {
+				Student stu = stus.next();
+				System.out.println(stu.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test06() {
+		Session session = null;
+		try {
+			/**
+			 * 此时会发出一条sql取出所有的学生信息
+			 */
+			session = HibernateUtil.openSession();
+			List<Object[]> ls = session.createQuery("select stu from Student stu")
+					.setFirstResult(0).setMaxResults(50).list();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+		
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 由于学生的对象已经缓存在二级缓存中了，此时再使用iterate来获取对象的时候，首先会通过一条
+			 * 取id的语句，然后在获取对象时去二级缓存中，如果发现就不会再发SQL，这样也就解决了N+1问题
+			 * 而且内存占用也不多
+			 */
+			Iterator<Student> stus = session.createQuery("from Student")
+					.setFirstResult(0).setMaxResults(50).iterate();
+			for(;stus.hasNext();) {
+				Student stu = stus.next();
+				System.out.println(stu.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+}

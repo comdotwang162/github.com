@@ -1,0 +1,143 @@
+package org.zttc.itat.test;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.junit.Test;
+import org.zttc.itat.model2.Classroom;
+import org.zttc.itat.model2.Special;
+import org.zttc.itat.model2.Student;
+import org.zttc.itat.util.HibernateUtil;
+
+@SuppressWarnings("unchecked")
+public class TestFetch {
+	@Test
+	public void test01() {
+		Session session = null;
+		try {
+			/**
+			 * 默认情况会发出3条SQL语句，一条取student，一条取Classroom,一条取Special
+			 * 通过设置XML中的<many-to-one name="classroom" column="cid" fetch="join"/>
+			 * 可以完成对抓取的设置
+			 */
+			session = HibernateUtil.openSession();
+			Student stu = (Student)session.load(Student.class, 1);
+			System.out.println(stu.getName()+","+stu.getClassroom().getName()+","+stu.getClassroom().getSpecial().getName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test02() {
+		Session session = null;
+		try {
+			/**
+			 * 使用fetch=join虽然可以将关联对象抓取，但是如果不使用关联对象也会一并查询出来
+			 * 这样会占用相应的内存
+			 */
+			session = HibernateUtil.openSession();
+			Student stu = (Student)session.load(Student.class, 1);
+			//延迟加载就失效
+			System.out.println(stu.getName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test03() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 在XML中配置了fetch=join仅仅只是对load的对象有用，对HQL中查询的对象无用，
+			 * 所以此时会发出查询班级的SQL，解决的这个SQL的问题有两种方案，
+			 * 一种是设置对象的抓取的batch-size
+			 * 另一种方案在HQL中使用fecth来指定抓取
+			 */
+			List<Student> stus = session.createQuery("from Student").list();
+			for(Student stu:stus) {
+				System.out.println(stu.getName()+","+stu.getClassroom());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test04() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 在XML中配置了fetch=join仅仅只是对load的对象有用，对HQL中查询的对象无用，
+			 * 所以此时会发出查询班级的SQL，解决的这个SQL的问题有两种方案，
+			 * 一种是设置对象的抓取的batch-size
+			 * 另一种方案在HQL中使用fecth来指定抓取
+			 * 特别注意，如果使用了join fetch就无法使用count(*)
+			 */
+			List<Student> stus = session.createQuery("select stu from " +
+					"Student stu join fetch stu.classroom").list();
+			for(Student stu:stus) {
+				System.out.println(stu.getName()+","+stu.getClassroom());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test05() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			Classroom cla = (Classroom)session.load(Classroom.class, 1);
+			System.out.println(cla.getName());
+			/*
+			 * 此时会在发出一条SQL取学生对象
+			 */
+			for(Student stu:cla.getStus()) {
+				System.out.println(stu.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test06() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			
+			List<Classroom> clas = session.createQuery("from Classroom").list();
+			for(Classroom cla:clas) {
+				System.out.println(cla.getName());
+				/*
+				 * 对于通过HQL取班级列表并且获取相应的学生列表时，fecth=join就无效了
+				 * 第一种方案可以设置set的batch-size来完成批量的抓取
+				 * 第二中方案可以设置fetch=subselect,使用subselect会完成根据查询出来的班级进行一次对学生对象的子查询
+				 */
+				for(Student stu:cla.getStus()) {
+					System.out.print(stu.getName());
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+}

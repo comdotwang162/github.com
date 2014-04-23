@@ -1,0 +1,95 @@
+package org.zttc.itat.test;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.junit.Test;
+import org.zttc.itat.model.Special;
+import org.zttc.itat.model.Student;
+import org.zttc.itat.util.HibernateUtil;
+
+public class TestFetch {
+	@Test
+	public void test01() {
+		Session session = null;
+		try {
+			/**
+			 * 默认情况会发出3条SQL语句，一条取student，一条取Classroom,一条取Special
+			 * 通过设置XML中的<many-to-one name="classroom" column="cid" fetch="join"/>
+			 * 可以完成对抓取的设置
+			 */
+			session = HibernateUtil.openSession();
+			Student stu = (Student)session.load(Student.class, 1);
+			System.out.println(stu.getName()+","+stu.getClassroom().getName()+","+stu.getClassroom().getSpecial().getName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test02() {
+		Session session = null;
+		try {
+			/**
+			 * 使用fetch=join虽然可以将关联对象抓取，但是如果不使用关联对象也会一并查询出来
+			 * 这样会占用相应的内存
+			 */
+			session = HibernateUtil.openSession();
+			Student stu = (Student)session.load(Student.class, 1);
+			//延迟加载就失效
+			System.out.println(stu.getName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test03() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 在XML中配置了fetch=join仅仅只是对load的对象有用，对HQL中查询的对象无用，
+			 * 所以此时会发出查询班级的SQL，解决的这个SQL的问题有两种方案，
+			 * 一种是设置对象的抓取的batch-size
+			 * 另一种方案在HQL中使用fecth来指定抓取
+			 */
+			List<Student> stus = session.createQuery("from Student").list();
+			for(Student stu:stus) {
+				System.out.println(stu.getName()+","+stu.getClassroom());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test04() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 在XML中配置了fetch=join仅仅只是对load的对象有用，对HQL中查询的对象无用，
+			 * 所以此时会发出查询班级的SQL，解决的这个SQL的问题有两种方案，
+			 * 一种是设置对象的抓取的batch-size
+			 * 另一种方案在HQL中使用fecth来指定抓取
+			 */
+			List<Student> stus = session.createQuery("select stu from " +
+					"Student stu join fecth stu.classroom").list();
+			for(Student stu:stus) {
+				System.out.println(stu.getName()+","+stu.getClassroom());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+}

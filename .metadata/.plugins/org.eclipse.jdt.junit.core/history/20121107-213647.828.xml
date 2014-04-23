@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testrun name="TestSQL.test02" project="hibernate_hql_xml" tests="1" started="1" failures="0" errors="0" ignored="0">
+  <testcase name="test02" classname="org.zttc.itat.test.TestSQL" time="1.406"/>
+</testrun>

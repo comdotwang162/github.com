@@ -1,0 +1,38 @@
+package org.zttc.itat.test;
+
+
+import java.util.Iterator;
+import java.util.List;
+
+import org.hibernate.Session;
+import org.junit.Test;
+import org.zttc.itat.model.Student;
+import org.zttc.itat.util.HibernateUtil;
+
+@SuppressWarnings("unchecked")
+public class TestCache {
+	@Test
+	public void test01() {
+		Session session = null;
+		try {
+			/**
+			 * 默认情况会发出3条SQL语句，一条取student，一条取Classroom,一条取Special
+			 * 通过设置XML中的<many-to-one name="classroom" column="cid" fetch="join"/>
+			 * 可以完成对抓取的设置
+			 */
+			session = HibernateUtil.openSession();
+			List<Student> ls = session.createQuery("from Student")
+					.setFirstResult(0).setMaxResults(50).list();
+			Iterator<Student> stus = ls.iterator();
+			for(;stus.hasNext();) {
+				Student stu = stus.next();
+				System.out.println(stu.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+}

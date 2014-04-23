@@ -1,0 +1,54 @@
+package org.zttc.itat.model1;
+
+import java.util.Set;
+
+public class Classroom {
+	private int id;
+	private String name;
+	private int grade;
+	private Set<Student> stus;
+	private Special special;
+	public Classroom() {
+	}
+	public Classroom(String name, int grade, Special special) {
+		this.name = name;
+		this.grade = grade;
+		this.special = special;
+	}
+	public Classroom(int id) {
+		this.id = id;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getGrade() {
+		return grade;
+	}
+	public void setGrade(int grade) {
+		this.grade = grade;
+	}
+	public Set<Student> getStus() {
+		return stus;
+	}
+	public void setStus(Set<Student> stus) {
+		this.stus = stus;
+	}
+	public Special getSpecial() {
+		return special;
+	}
+	public void setSpecial(Special special) {
+		this.special = special;
+	}
+	
+	
+	
+}

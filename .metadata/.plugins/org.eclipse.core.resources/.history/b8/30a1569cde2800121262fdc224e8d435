@@ -1,0 +1,9 @@
+package org.zttc.itat.model;
+
+public class StuDto {
+	private Student stu;
+	private Classroom cla;
+	private Special spe;
+	
+	
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zttc.itat.model">
+    <class name="Student" table="t_stu">
+        <id name="id">
+          	<generator class="native"/>
+        </id>
+        <property name="name"/>
+        <property name="no"/>
+        <!-- many-to-one用来映射多对一，name表示对象中的属性名称 ，column用来表示外键的名称-->
+        <!-- 当设置了cascade的时候，会自动完成关联，如果添加时没有关联对象，会自动创建一个关联对象
+        最佳实践：如果没有特殊情况不要使用cascade,特别注意，可能使用cascade的地方一般都是一的一方进行删除时使用
+        特殊需求才会使用cascade的add，正常情况add方法都是应该有程序员完成添加 -->
+        <many-to-one name="classroom" column="cid"/>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zttc.itat.model">
+    <class name="Classroom" table="t_classroom">
+        <id name="id">
+          	<generator class="native"/>
+        </id>
+        <property name="name"/>
+        <property name="grade"/>
+        <many-to-one name="special" column="spe_id" fetch="join"/>
+        <set name="stus" inverse="true" lazy="extra" fetch="subselect">
+        	<key column="cid"/>
+        	<one-to-many class="Student"/>
+        </set>
+    </class>
+</hibernate-mapping>

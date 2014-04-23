@@ -1,0 +1,54 @@
+package org.zttc.itat.test;
+
+import java.util.List;
+
+import org.hibernate.Session;
+import org.junit.Test;
+import org.zttc.itat.model.Student;
+import org.zttc.itat.util.HibernateUtil;
+
+@SuppressWarnings("unchecked")
+public class TestSQL {
+	
+	@Test
+	public void test01() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			List<Student> stus = session.createSQLQuery("select * from t_stu where name like ?")
+					.addEntity(Student.class)
+					.setParameter(0, "%孔%")	
+					.setFirstResult(0).setMaxResults(10)
+					.list();
+			for(Student stu:stus) {
+				System.out.println(stu.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test02() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			List<Object[]> stus = session.createSQLQuery("select * from " +
+					"t_stu stu left join t_classroom cla on(cla.id=stu.cla_id) " +
+					"left join t_special spe on(spe.id=cla.cla_id) where name like ?")
+					.addEntity(Student.class)
+					.setParameter(0, "%孔%")	
+					.setFirstResult(0).setMaxResults(10)
+					.list();
+			for(Student stu:stus) {
+				System.out.println(stu.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+}

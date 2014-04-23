@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zttc.itat.model">
+    <class name="Message" table="t_msg">
+        <id name="id">
+        <!-- 表示不会自动生成，而是需要由用户来指定 -->
+          <!--   <generator class="assigned"/> -->
+        <!-- 会自动生成一个字符串，此时组件必须为String类型 -->
+          	<generator class="native"/>
+        </id>
+        <property name="title"/>
+        <property name="content"/>
+        <!-- 使用了lazy=extra之后会稍微智能一些，会根据去的值的不同来判断是调用count和获取投影 -->
+        <set name="comments" lazy="extra">
+        <!-- key用来指定在对方的外键的名称 -->
+        	<key column="mid"/>
+        <!-- class用来设置列表中的对象类型 -->
+        	<one-to-many class="Comment"/>
+        </set>
+    </class>
+</hibernate-mapping>

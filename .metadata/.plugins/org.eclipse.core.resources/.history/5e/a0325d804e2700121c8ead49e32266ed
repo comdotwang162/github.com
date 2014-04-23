@@ -1,0 +1,69 @@
+package org.zttc.itat.test;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.junit.Test;
+import org.zttc.itat.model.Special;
+import org.zttc.itat.model.Student;
+import org.zttc.itat.util.HibernateUtil;
+
+public class TestFetch {
+	@Test
+	public void test01() {
+		Session session = null;
+		try {
+			/**
+			 * 默认情况会发出3条SQL语句，一条取student，一条取Classroom,一条取Special
+			 * 通过设置XML中的<many-to-one name="classroom" column="cid" fetch="join"/>
+			 * 可以完成对抓取的设置
+			 */
+			session = HibernateUtil.openSession();
+			Student stu = (Student)session.load(Student.class, 1);
+			System.out.println(stu.getName()+","+stu.getClassroom().getName()+","+stu.getClassroom().getSpecial().getName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test02() {
+		Session session = null;
+		try {
+			/**
+			 * 使用fetch=join虽然可以将关联对象抓取，但是如果不使用关联对象也会一并查询出来
+			 * 这样会占用相应的内存
+			 */
+			session = HibernateUtil.openSession();
+			Student stu = (Student)session.load(Student.class, 1);
+			//延迟加载就失效
+			System.out.println(stu.getName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test03() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			/**
+			 * 由于基于Annotation的配置没有延迟加载，此时会把所有的关联对象查询上来，发大量的SQL语句
+			 */
+			List<Student> stus = session.createQuery("from Student").list();
+			for(Student stu:stus) {
+				System.out.println(stu.getName()+","+stu.getClassroom());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+}

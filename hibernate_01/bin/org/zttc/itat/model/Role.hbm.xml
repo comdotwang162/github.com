@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.zttc.itat.model">
+    <class name="Role" table="t_role">
+        <id name="id">
+          	<generator class="native"/>
+        </id>
+        <property name="name"/>
+        <set name="admins" table="t_admin_role" lazy="extra">
+        	<key column="rid"/>
+        	<many-to-many class="Admin" column="aid"/>
+        </set>
+    </class>
+</hibernate-mapping>

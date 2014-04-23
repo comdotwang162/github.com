@@ -1,0 +1,61 @@
+package org.zttc.itat.test;
+
+import java.util.List;
+
+import org.hibernate.Session;
+import org.junit.Test;
+import org.zttc.itat.model.Classroom;
+import org.zttc.itat.model.Special;
+import org.zttc.itat.model.Student;
+import org.zttc.itat.util.HibernateUtil;
+
+@SuppressWarnings("unchecked")
+public class TestSQL {
+	
+	@Test
+	public void test01() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			List<Student> stus = session.createSQLQuery("select * from t_stu where name like ?")
+					.addEntity(Student.class)
+					.setParameter(0, "%孔%")	
+					.setFirstResult(0).setMaxResults(10)
+					.list();
+			for(Student stu:stus) {
+				System.out.println(stu.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+	
+	@Test
+	public void test02() {
+		Session session = null;
+		try {
+			session = HibernateUtil.openSession();
+			List<Object[]> stus = session.createSQLQuery("select stu.*,cla.*,spe.*," +
+					"stu.name as stu_name,cla.name as cla_name,spe.name as spe_name from " +
+					"t_stu stu left join t_classroom cla on(cla.id=stu.cid) " +
+					"left join t_special spe on(spe.id=cla.cla_id) where stu.name like ?")
+					.addEntity("stu",Student.class)
+					.addEntity("cla",Classroom.class)
+					.addEntity("spe",Special.class)
+					.setParameter(0, "%孔%")	
+					.setFirstResult(0).setMaxResults(10)
+					.list();
+			for(Object[] obj:stus) {
+				Student s = (Student)obj[0];
+				Classroom cla = (Classroom)obj[1];
+				Special spe = (Special)obj[2];
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			HibernateUtil.close(session);
+		}
+	}
+}
